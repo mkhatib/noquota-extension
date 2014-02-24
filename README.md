@@ -6,6 +6,7 @@ that no longer exists.
 
 # Extension Popup View
 Shows the percentage and warn the user of how much data left for them to use.
+
 ![alt text](https://googledrive.com/host/0B9qF9jxAyahXSmVoSGpMU291bkk/Images/noquota-extension.png "Extension Popup View")
 
 # Options page
