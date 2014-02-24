@@ -1,0 +1,17 @@
+{
+  "name": "Internet Quota Consumption Chrome Extension",
+  "version": "1.0",
+  "description": "If you're a Palnet user (not that it is a good thing :-) this might come in handy. It checks your quota consumption periodacilly so you monitor your usage of your bandwidth",
+  "options_page": "options.html",
+	"background_page": "background.html",
+  "icons": { "48": "icon48.png",
+             "128": "icon128.png"},
+  "browser_action": {
+    "default_icon": "icon.png",
+    "popup":"popup.html"
+  },
+  "permissions": [
+    "http://givemerss.appspot.com/"
+  ]
+}
+

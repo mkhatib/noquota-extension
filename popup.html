@@ -1,0 +1,99 @@
+<style>
+body {
+  min-width:200px;
+  overflow-x:hidden;
+}
+
+.content {
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+.box {
+  margin:5px;
+  border:2px solid black;
+  vertical-align:middle;
+  width:75px;
+  height:75px;
+}
+
+.full_quota {
+    background: #5b7074;
+}
+
+.used_quota {
+    background: #80a2a8;
+}
+.available_quota {
+    background: #8092a8;
+}
+.used_percentage {
+    background: #98a5c4;
+}
+.roundedbox {
+    margin-bottom: 1px;
+    padding: 7px;
+    padding-left: 25px;
+    padding-right: 25px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+}
+
+</style>
+
+<script>
+
+function showPopup(){
+  if (localStorage['used_percentage'] != null && localStorage['used_percentage'] != NaN) {
+    showQuotaData();
+  }
+}
+
+function showQuotaData(){
+    var badgeText = localStorage['badgeText'];
+    var div = document.createElement("div");
+    div.className = "content";
+
+    var full_quota_div  = document.createElement("div");
+    full_quota_div.className = "roundedbox full_quota";
+    full_quota_div.innerHTML = "Full Quota <span style='float:right;'>" + localStorage['full_quota'] + " GB</span>";
+    div.appendChild(full_quota_div);
+
+    var used_quota_div  = document.createElement("div");
+    used_quota_div.className = "roundedbox used_quota";
+    used_quota_div.innerHTML = "Used Quota <span style='float:right;'>" + localStorage['used_quota'] + " GB</span>";
+    div.appendChild(used_quota_div);
+
+    var available_quota_div  = document.createElement("div");
+    available_quota_div.className = "roundedbox available_quota";
+    available_quota_div.innerHTML = "Available Quota <span style='float:right;'>" + localStorage['available_quota'] + " GB</span>";
+    div.appendChild(available_quota_div);
+
+    var used_percentage_div  = document.createElement("div");
+    used_percentage_div.className = "roundedbox used_percentage";
+    used_percentage_div.innerHTML = "Used Percentage <span style='float:right;'>" + localStorage['used_percentage'] + "%</span>";
+    div.appendChild(used_percentage_div);
+
+    document.body.appendChild(div);
+    
+    chrome.browserAction.setBadgeBackgroundColor({color:getPercentageColor(localStorage[badgeText])});
+    chrome.browserAction.setBadgeText({text:""+localStorage[badgeText]});
+}
+
+function getPercentageColor(percentage){
+  if (percentage < 25) {
+    return [0,0,255,255];
+  } else if (percentage < 50 ) {
+    return [0,0,255,255];
+  } else if (percentage < 75) {
+    return [255,0,255,255];
+  } else {
+    return [255,0,0,255];
+  }
+}
+
+showPopup();
+</script>
+
+<body onload="showPopup();"></body>

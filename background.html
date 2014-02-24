@@ -1,0 +1,77 @@
+<html>
+<head>
+<style>
+body {
+  min-width:357px;
+  overflow-x:hidden;
+}
+
+img {
+  margin:5px;
+  border:2px solid black;
+  vertical-align:middle;
+  width:75px;
+  height:75px;
+}
+</style>
+
+<script>
+var pollInterval = 5*1000*60; // 5 Minutes in Milliseconds
+var req;
+
+
+function startRequest() {
+  req = new XMLHttpRequest();
+  var tel = "022819320"
+  var nat = "906319975"
+  req.open(
+    "GET",
+        "<BACKEND_SERVICE_HOST>/services/quota?telph_no="+tel+"&Nat_id="+nat,
+    true);
+  req.onload = showQuotaData;
+  req.send(null);
+
+  window.setTimeout(startRequest, pollInterval);
+}
+
+
+
+function showQuotaData(){
+    var badgeText = localStorage['badgeText'];
+    var json = JSON.parse(req.responseText);
+    var div = document.createElement('div');
+
+    var used_percentage = parseFloat(json.result.used_percentage);
+    var full_quota = parseFloat(json.result.full_quota);
+    var used_quota = parseFloat(json.result.used_quota);
+    var available_quota = parseFloat(json.result.available_quota);
+
+    div.innerHTML = used_percentage;
+    document.body.appendChild(div);
+    
+    chrome.browserAction.setBadgeBackgroundColor({color:getPercentageColor()});
+    chrome.browserAction.setBadgeText({text:""+localStorage[badgeText]});
+   
+    localStorage['used_percentage'] = used_percentage;
+    localStorage['full_quota'] = full_quota;
+    localStorage['used_quota'] = used_quota;
+    localStorage['available_quota'] = available_quota;
+}
+
+function getPercentageColor(){
+    var percentage = localStorage['used_percentage'];
+    if (percentage < 25) {
+      return [0,255,0,255];
+    } else if (percentage < 50 ) {
+      return [0,0,255,255];
+    } else if (percentage < 75) {
+      return [255,0,255,255];
+    } else {
+      return [255,0,0,255];
+    }
+}
+</script>
+<head>
+<body onload="startRequest()">
+</body>
+</html>

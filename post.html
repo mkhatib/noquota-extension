@@ -1,0 +1,30 @@
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>Post Request</title>
+		<script src="http://wojoodapi.appspot.com/JS/namesServ.js" language="javascript" type="text/javascript"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		
+		<script type="text/javascript" charset="utf-8">
+		// $.ready(function(){
+			content = $("#content");
+			function getName(){
+				var name = document.getElementById('name').value; // read names ...
+				var tel = localStorage["tel"];
+				var nat = localStorage["id"];
+				jQuery.getJSON("<BACKEND_SERVICE_HOST>/services/quota?teleph_no="+tel+"&Nat_id="+nat+"&callback=?",function(data) {
+					if(data.result)
+						alert('Used Quota: ' + data.result.used_quota);
+					else
+						alert('Error: ' + data.error.message + ' - Code: ' + data.error.code);
+				});
+			}
+			
+		// });
+		</script>
+	</head>
+	<body id="post" onload="">
+		<input id="name" /><input type="button" onclick="getName()" value="Send">
+		<div id="content"></div>
+	</body>
+</html>

@@ -1,0 +1,205 @@
+<html>
+<head>
+	<title>Internet Quota Notifier Extension Options</title>
+	<style>
+		#content {
+			margin: 100px	;
+			background-color: lightblue;
+		}
+		label {
+			color: #344245;
+			font-size: 12px;
+			font-weight: bold;
+		}
+		h1 {
+			
+		}
+		.roundedbox {
+		    margin: 1px;
+		    padding: 25px;
+		    -webkit-border-radius: 15px;
+		    -moz-border-radius: 15px;
+		    border-radius: 15px;
+		}
+		.roundedbox .title {
+			margin-top:-50px;
+			color: #344245;
+		}
+		.input {
+			margin: 0px;
+			padding: 5px;
+			border: solid black 1px;
+			width: 200px;
+			-webkit-border-radius: 10px;
+	    -moz-border-radius: 10px;
+	    border-radius: 10px;
+		}
+	</style>
+</head>	
+<script type="text/javascript">
+
+// Saves options to localStorage.
+function save_options() {
+  var tel = document.getElementById("tel");
+  var id = document.getElementById("id");
+  var bt  = document.getElementById("badgeText");
+  localStorage["tel"] = tel.value;
+  localStorage["id"] = id.value;
+  localStorage["badgeText"] = bt.children[bt.selectedIndex].value;
+	
+  // Update status to let user know options were saved.
+  var status = document.getElementById("status");
+  status.innerHTML = "Options Saved.";
+  setTimeout(function() {
+    status.innerHTML = "";
+  }, 750);
+}
+
+function save_account() {
+	var account_type = document.getElementsByName('account_type');
+	var username = document.getElementById("username");
+	var password = document.getElementById("password");
+	var enable_stats = document.getElementById("enable_stats");
+	var enable_auto_stats = document.getElementById("enable_auto_stats");
+	var polling_period = document.getElementById("polling_period");
+	
+	localStorage["username"] = username.value;
+	localStorage["password"] = password.value;
+	localStorage["enable_stats"] = enable_stats.checked;
+	localStorage["enable_auto_stats"] = enable_auto_stats.checked;
+	localStorage["polling_period"] = polling_period.value;
+	
+	alert(localStorage["enable_stats"]);
+
+	var request_method = "";
+	if (account_type[1].checked) { // new_user
+		request_method = "POST";
+	} else {
+		request_method = "PUT";
+	}
+	
+	var req = new XMLHttpRequest();
+	var params = "username="+localStorage["username"]+
+							 "&password="+localStorage["password"]+
+							 "&enable_stats="+localStorage["enable_stats"]+
+							 "&enable_auto_stats="+localStorage["enable_auto_stats"]+
+							 "&polling_period="+localStorage["polling_period"]+
+							 "&telephone_number="+localStorage["tel"]+
+							 "&user_id="+localStorage["id"]+
+							 "&method="+request_method;
+	//alert(params);
+  req.open("POST","http://givemerss.appspot.com/services/quota",true);
+
+	req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	req.setRequestHeader("Content-length", params.length);
+	req.setRequestHeader("Connection", "close");
+
+	req.onreadystatechange = function() {//Call a function when the state changes.
+		if(http.readyState == 4 && http.status == 200) {
+			alert(http.responseText);
+		}
+	}
+
+	req.send(params);
+	//req.onload = showQuotaData;	  
+}
+
+function clear_history() {
+	// Ajax request to the server to clear the history
+}
+
+// Restores select box state to saved value from localStorage.
+function restore_options() {
+  var tel = localStorage["tel"];
+  var id = localStorage["id"];
+  document.getElementById("tel").value = tel;
+  document.getElementById("id").value = id;
+
+	if (localStorage["username"])
+		document.getElementsByName('account_type')[0].checked = "checked";
+	else 
+		document.getElementsByName('account_type')[1].checked = "checked";
+		
+	document.getElementById("username").value = localStorage["username"];
+	document.getElementById("password").value = localStorage["password"];
+	if(localStorage["enable_stats"] == "true")
+		document.getElementById("enable_stats").checked = true;
+	if(localStorage["enable_auto_stats"] == "true") 
+		document.getElementById("enable_auto_stats").checked = true;
+	document.getElementById("polling_period").value = localStorage["polling_period"];
+
+
+
+  //if(!localStorage["badgeText"]) return;
+
+  var select = document.getElementById("badgeText");
+  for (var i = 0; i < select.children.length; i++) {
+    var child = select.children[i];
+    if (child.value == localStorage["badgeText"]) {
+      child.selected = "true";
+      break;
+    }
+  }
+}
+
+</script>
+
+<body onload="restore_options()">
+<div id="content" class="roundedbox" style="margin-bottom: 60px;">
+	<h1 class="title">Internet Quota Extension Options</h1>
+
+	<label for="tel">Telephone Number</label><br/>
+	<input class="roundedbox input" type="text" name="tel" id="tel"/><br/>
+
+	<br/>
+	<label for="id">ID Number</label><br/>
+	<input class="roundedbox input" type="text" name="id" id="id"/></br>
+	<br/>
+	
+	<label for="badgeText">Icon Badge</label><br/>
+	<select class="roundedbox input" id="badgeText" name="badgeText">
+	 <option value="used_percentage">Used Percentage</option>
+	 <option value="full_quota">Full Quota</option>
+	 <option value="used_quota">Used Quota</option>
+	 <option value="available_quota">Available Quota</option>
+	</select>
+	<br/></br>
+	
+	<button onclick="save_options()">Save</button>
+</div>
+<div id="content" class="roundedbox" style="margin-top: 30px;margin-bottom:60px;">
+	<h1 class="title">Setup Your Account On IQE</h1>
+	<label><input type="radio" name="account_type" value="registered_user" checked="checked"/> Registered User</label>
+	<label><input type="radio" name="account_type" value="new_user"/> New User</label>
+	<p></p>
+	<label for="username">Username</label><br/>
+	<input class="roundedbox input" type="text" name="username" id="username"/></br>
+	<br/>
+	
+	<label for="password">Password</label><br/>
+	<input class="roundedbox input" type="password" name="password" id="password"/></br>
+	<br/>
+	
+	<label for="enable_stats">
+		<input type="checkbox" id="enable_stats" name="enable_stats"/>Save Daily Statistics 
+	</label>
+	<br/>
+	
+	<label for="enable_auto_stats">
+		<input type="checkbox" id="enable_auto_stats" name="enable_auto_stats"/>Let the server collect statistics even when I am offline with Polling Period: <input class="input" style="width:30px;text-align:center;" type="text" name="polling_period" id="polling_period" value="5"/> Minutes</br>
+	</label>
+	<br/>
+
+	<div style="float:right;font-size:12px;"><a href="tos.html"><i>Terms of Use</i></a></div>
+	<button onclick="save_account()">Save</button>
+	
+</div>
+
+<div id="content" class="roundedbox" style="margin-top:30px;">
+	<h1 class="title">Other Options</h1>
+	<a href="#" onclick="clear_histroy()" style="font-size:14px;"><i>Clear History</i></a>
+	<br/></br>	
+</div>
+</body>
+</html>
+
